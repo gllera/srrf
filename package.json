@@ -7,7 +7,7 @@
     "serve": "SRR_CDN_URL=http://localhost:3000 parcel serve --no-cache --dist-dir ../dist --cache-dir ../.parcel-cache",
     "servep": "npx serve --cors ../packs",
     "served": "npx serve --cors ../debug",
-    "build": "parcel build --no-cache --no-source-maps --dist-dir dist"
+    "build": "parcel build --public-url . --no-cache --no-source-maps --dist-dir dist"
   },
   "dependencies": {
     "@parcel/transformer-pug": "^2.12.0",
