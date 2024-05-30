@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "module": "NodeNext",
+        "moduleResolution":"nodenext",
+        "typeRoots" : ["./src/global.d.ts"],
+        "target": "es6",
+    }
+}

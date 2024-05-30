@@ -1,0 +1,24 @@
+{
+  "name": "rsss",
+  "version": "1.0.0",
+  "source": "src/index.pug",
+  "scripts": {
+    "dev": "concurrently -k npm:serve npm:servep",
+    "serve": "SRR_CDN_URL=http://localhost:3000 parcel serve --no-cache --dist-dir ../dist --cache-dir ../.parcel-cache",
+    "servep": "npx serve --cors ../packs",
+    "served": "npx serve --cors ../debug",
+    "build": "parcel build --no-cache --no-source-maps --dist-dir dist"
+  },
+  "dependencies": {
+    "@parcel/transformer-pug": "^2.12.0",
+    "@parcel/transformer-sass": "^2.12.0",
+    "bootstrap": "^5.3.3",
+    "cash-dom": "^8.1.5",
+    "dayjs": "^1.11.11",
+    "parcel": "^2.12.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "serve": "^14.2.3"
+  }
+}

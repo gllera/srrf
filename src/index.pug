@@ -1,0 +1,35 @@
+doctype html
+html
+   head
+      title SRR
+      meta(charset='utf-8')
+      meta(name='viewport' content='width=device-width,initial-scale=1.0')
+      link(rel='icon' href='favicon.png')
+      link(rel='stylesheet' href='styles.sass')
+      base(target='_blank')
+
+   body
+      .srr-container
+         .srr-panel.hidden
+            .srr-top Select a filter
+            .srr-selector
+
+         .srr-feed.hidden
+            .srr-header
+               .srr-in
+                  a.srr-link
+                     .srr-title
+               .srr-info
+                  .srr-website
+                  .srr-tag
+                  .srr-published
+            .srr-content
+            .srr-controls
+               button.srr-left(disabled) <<
+               button.srr-right(disabled) >>
+
+      script(type='text/javascript').
+         PACKS_URL = "#{process.env.SRR_CDN_URL}"
+         DB = fetch(PACKS_URL + "/db.json")
+
+      script(src='js/app.ts', type="module")
