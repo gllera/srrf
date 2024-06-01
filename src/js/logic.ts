@@ -75,6 +75,9 @@ function findRightIdx(from: number, subId: number): number {
 }
 
 export async function last(subId: string = undefined) {
+   if (subId == undefined && state.prev != undefined)
+      subId = String(pack[state.pos].subId)
+
    const id = parseInt(subId)
    const sub: ISubscription = db.subscriptions[id]
 
@@ -140,7 +143,7 @@ function hashUpdate() {
 
    const hash = `#${state.packid}.${state.pos}${filter}`
 
-   history.pushState(null, '', hash);
+   history.pushState(null, null, hash);
    window.dispatchEvent(new HashChangeEvent('hashchange', {
       newURL: window.location.origin + window.location.pathname + hash,
       oldURL: window.location.href,

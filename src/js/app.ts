@@ -13,8 +13,10 @@ const html = {
    title: $(".srr-title"),
    content: $(".srr-content"),
    link: $(".srr-link"),
+   menu: $(".srr-menu"),
    left: $(".srr-left"),
    right: $(".srr-right"),
+   last: $(".srr-last"),
    website: $(".srr-website"),
    tag: $(".srr-tag"),
    published: $(".srr-published"),
@@ -93,40 +95,36 @@ async function init() {
    html.selector.html(arr.join(""))
 
    $(".srr-label").on("click", async e => await packs.last(e.target.dataset.value))
+   html.menu.on("click", async () => {
+      if (showing == "panel")
+         await read(location.hash.substring(1))
+      else
+         show("panel")
+   })
    html.left.on("click", async e => e.target.disabled || await packs.left())
    html.right.on("click", async e => e.target.disabled || await packs.right())
+   html.last.on("click", async e => await packs.last())
 
    window.onhashchange = async e => await read(e.newURL.split("#", 2)[1])
    document.onkeydown = async e => {
       switch (e.key) {
+         case "w":
          case "Escape":
-            if (showing == "panel")
-               await read(location.hash.substring(1))
-            else
-               show("panel")
+            html.menu.first().trigger("click")
             e.preventDefault()
             break
          default:
             if (!html.body.hasClass("hidden"))
                switch (e.key) {
-                  case "a":
-                  case "ArrowLeft":
-                     html.left.trigger("click")
+                  case "s":
+                     await packs.last()
                      e.preventDefault()
                      break
-                  // case "End":
-                  //    await packs.last()
-                  //    break
-                  // case "w":
-                  // case "ArrowUp":
-                  //    window.scrollBy(0, -document.documentElement.clientHeight / 2)
-                  //    e.preventDefault()
-                  //    break
-                  // case "s":
-                  // case "ArrowDown":
-                  //    window.scrollBy(0, document.documentElement.clientHeight / 2)
-                  //    e.preventDefault()
-                  //    break
+                  case "a":
+                     case "ArrowLeft":
+                        html.left.trigger("click")
+                        e.preventDefault()
+                        break
                   case "d":
                   case "ArrowRight":
                      html.right.trigger("click")

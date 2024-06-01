@@ -13,6 +13,8 @@ html
          .srr-panel.hidden
             .srr-top Select a filter
             .srr-selector
+            .srr-controls
+               button.srr-menu M
 
          .srr-feed.hidden
             .srr-header
@@ -25,8 +27,10 @@ html
                   .srr-published
             .srr-content
             .srr-controls
-               button.srr-left(disabled) <<
-               button.srr-right(disabled) >>
+               button.srr-left(disabled) <
+               button.srr-right(disabled) >
+               button.srr-last >|
+               button.srr-menu M
 
       script(type='text/javascript').
          PACKS_URL = "#{process.env.SRR_CDN_URL}"
