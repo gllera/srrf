@@ -10,13 +10,10 @@ html
 
    body
       .srr-container
-         .srr-panel.hidden
-            .srr-top Select a filter
+         .srr-panel.vPanel.hidden
             .srr-selector
-            .srr-controls
-               button.srr-menu M
 
-         .srr-feed.hidden
+         .srr-feed.vFeed.hidden
             .srr-header
                .srr-in
                   a.srr-link
@@ -26,11 +23,12 @@ html
                   .srr-tag
                   .srr-published
             .srr-content
-            .srr-controls
-               button.srr-left(disabled) <
-               button.srr-right(disabled) >
-               button.srr-last >|
-               button.srr-menu M
+
+         .srr-controls
+            button.srr-left.vFeed.hidden(disabled) <
+            button.srr-right.vFeed.hidden(disabled) >
+            button.srr-last.vFeed.hidden >|
+            button.srr-menu M
 
       script(type='text/javascript').
          PACKS_URL = "#{process.env.SRR_CDN_URL}"

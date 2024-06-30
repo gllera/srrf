@@ -10,17 +10,13 @@ html
 img
     @include img-fluid
 
-button
-    border-radius: 1rem
-    padding: 0.5rem 1.5rem
-
 .hidden
     display: none
 
 .srr-feed
     padding-bottom: 4rem
 
-.srr-header, .srr-top
+.srr-header
     margin-bottom: .5rem
     box-shadow: 0 .3rem .1rem -.15rem #0004
 
@@ -33,7 +29,7 @@ button
     color: inherit
     text-decoration: none
 
-.srr-title, .srr-top
+.srr-title
     font-weight: bold
     font-size: 1.1rem
 
@@ -57,6 +53,41 @@ button
     font-weight: bold
     margin-right: .6rem
 
+.srr-tabs
+    display: flex
+    justify-content: center
+    flex-wrap: wrap
+    margin-bottom: .5rem
+    padding-bottom: .2rem
+    box-shadow: 0 .3rem .1rem -.15rem #0004
+
+    button
+        background-color: inherit
+        border: none
+        outline: none
+        cursor: pointer
+        margin: .1rem
+        padding: .5rem .6rem
+        border-radius: 1rem
+        transition: 0.3s
+        &:hover
+            background-color: #ddd
+
+.srr-active
+    background-color: #ccc !important
+
+.srr-tabcontent
+    margin-top: .5rem
+    *
+        cursor: pointer
+        padding: 0.3rem
+
+.srr-site
+    &:nth-child(even)
+        background-color: #eee !important
+    &:hover
+        background-color: #ddd !important
+
 .srr-published
     color: gray
 
@@ -66,6 +97,14 @@ button
     right: 0
     bottom: 0
     margin: 1rem
-    *
+    button
         margin-left: 1rem
         width: 4rem
+        border: none
+        outline: none
+        cursor: pointer
+        padding: .5rem .6rem
+        border-radius: 1rem
+        transition: 0.3s
+        &:hover
+            background-color: #ddd

@@ -1,147 +1,184 @@
 let db: IDB
-const pack: Array<IFeed> = []
-const idxs: Array<number> = []
 
-const state: IState = {
-   prev: undefined,
-   packid: -1,
+let tag: ISubscriptionTag = undefined
+const pack: IPack = {
+   id: -1,
+   tag: "-1",
+   arr: [],
    pos: -1,
+   prev: undefined,
 }
 
-export async function init(): Promise<ISubscription[]> {
+
+
+export async function init(): Promise<{ [id: number]: ISubscriptionTag }> {
    let res = await DB
    db = await res.json()
-   return db.subscriptions
+   return db.tags
 }
+
+
 
 export async function right() {
-   if (state.prev !== undefined) {
-      const curr = pack[state.pos]
-      let next = findRightIdx(state.pos + 1, curr.subId)
+   if (pack.prev !== undefined) {
+      const curr = pack.arr[pack.pos]
+      let next = findRightIdx(pack.pos + 1, curr.subId)
 
       if (next != -1) {
-         state.pos = next
+         pack.pos = next
       } else {
-         if (state.prev != "") {
-            await download(parseInt(state.prev))
-            state.pos = findRightIdx(0, curr.subId)
-            state.prev = ""
+         if (pack.prev != "") {
+            await download(pack.tag, parseInt(pack.prev))
+            pack.pos = findRightIdx(0, curr.subId)
+            pack.prev = ""
          }
       }
-   } else if (state.pos + 1 < pack.length) {
-      state.pos++
-   } else if (state.packid < db.packids) {
-      await download(state.packid + 1)
-      state.pos = 0
+   } else if (pack.pos + 1 < pack.arr.length) {
+      pack.pos++
+   } else if (pack.id < tag.packids) {
+      await download(pack.tag, pack.id + 1)
+      pack.pos = 0
    }
 
    hashUpdate()
 }
+
+
 
 export async function left() {
-   if (state.prev !== undefined) {
-      const curr = pack[state.pos]
+   if (pack.prev !== undefined) {
+      const curr = pack.arr[pack.pos]
 
       if (curr.prev !== undefined) {
-         const prev = state.packid.toString()
-         await download(curr.prev)
-         state.prev = prev
-         state.pos = findLeftIdx(pack.length - 1, curr.subId)
+         const prev = pack.id.toString()
+         await download(pack.tag, curr.prev)
+         pack.prev = prev
+         pack.pos = findLeftIdx(pack.arr.length - 1, curr.subId)
       } else {
-         state.pos = findLeftIdx(state.pos - 1, curr.subId)
+         pack.pos = findLeftIdx(pack.pos - 1, curr.subId)
       }
-   } else if (state.pos > 0) {
-      state.pos--
-   } else if (state.packid > 0) {
-      await download(state.packid - 1)
-      state.pos = pack.length - 1
+   } else if (pack.pos > 0) {
+      pack.pos--
+   } else if (pack.id > 0) {
+      await download(pack.tag, pack.id - 1)
+      pack.pos = pack.arr.length - 1
    }
 
    hashUpdate()
 }
+
+
 
 function findLeftIdx(from: number, subId: number): number {
    for (let i = from; i >= 0; i--)
-      if (pack[i].subId == subId)
+      if (pack.arr[i].subId == subId)
          return i
    return -1
 }
+
+
 
 function findRightIdx(from: number, subId: number): number {
-   for (let i = from; i < pack.length; i++)
-      if (pack[i].subId == subId)
+   for (let i = from; i < pack.arr.length; i++)
+      if (pack.arr[i].subId == subId)
          return i
    return -1
 }
 
-export async function last(subId: string = undefined) {
-   if (subId == undefined && state.prev != undefined)
-      subId = String(pack[state.pos].subId)
 
-   const id = parseInt(subId)
-   const sub: ISubscription = db.subscriptions[id]
 
-   if (sub === undefined) {
-      state.prev = undefined
-      return get(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, true)
+export async function last(ids: string = undefined) {
+   let tagId: string, subId: string
+   if (ids !== undefined) {
+      const arr = ids.split(".")
+      tagId = arr[0]
+      subId = arr[1]
+   } else if (pack.tag !== "-1") {
+      tagId = pack.tag
+      if (pack.prev !== undefined)
+         subId = pack.arr[pack.pos].subId.toString()
    }
 
-   state.prev = ""
-   await download(sub.last_packid)
+   if (!(tagId in db.tags)) {
+      pack.prev = undefined
+      return get("-1", Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, true)
+   }
 
-   for (let i = pack.length - 1; i >= 0; i--)
-      if (pack[i].subId == id)
-         return get(sub.last_packid, i, true)
+   tag = db.tags[tagId]
+   const sub = tag.subscriptions[subId]
+   if (sub === undefined) {
+      pack.prev = undefined
+      return get(tagId, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, true)
+   }
+
+   pack.prev = ""
+   await download(tagId, sub.last_packid)
+   for (let i = pack.arr.length - 1; i >= 0; i--)
+      if (pack.arr[i].subId == parseInt(subId))
+         return get(tagId, sub.last_packid, i, true)
 }
 
+
+
 export function setPrev(prev: string): boolean {
-   if (state.prev !== prev) {
-      state.prev = prev
+   if (pack.prev !== prev) {
+      pack.prev = prev
       return true
    }
    return false
 }
 
-export async function get(packId: number, pos: number, forceUpd: boolean = false): Promise<IShowFeed> {
-   const oPackId = state.packid, oPos = state.pos
 
-   if (!(0 < packId && packId <= db.packids)) {
-      packId = db.packids
-      pos = Number.MAX_SAFE_INTEGER
+
+export async function get(tagId: string, packId: number, pos: number, forceUpd: boolean = false): Promise<IShowFeed> {
+   const oTagId = pack.tag, oPackId = pack.id, oPos = pack.pos
+
+   if (!(tagId in db.tags)) {
+      tagId = Object.keys(db.tags)[0]
+      packId = undefined
+      pos = undefined
    }
-   await download(packId)
+   tag = db.tags[tagId]
 
-   if (!(0 <= pos && pos < pack.length))
-      pos = pack.length - 1
-   state.pos = pos
+   if (!(0 < packId && packId <= tag.packids)) {
+      packId = tag.packids
+      pos = undefined
+   }
+   await download(tagId, packId)
 
-   if (oPackId != state.packid || oPos != state.pos || forceUpd) {
+   if (!(0 <= pos && pos < pack.arr.length))
+      pos = pack.arr.length - 1
+   pack.pos = pos
+
+   if (oTagId != pack.tag || oPackId != pack.id || oPos != pack.pos || forceUpd) {
       hashUpdate()
       return null
    }
 
-   const feed = pack[state.pos]
-   const subs = db.subscriptions[feed.subId]
+   const feed = pack.arr[pack.pos]
+   const subs = tag.subscriptions[feed.subId]
    let has_right: boolean, has_left: boolean
 
-   if (state.prev === undefined) {
-      has_left = state.packid > 1 || state.pos > 0
-      has_right = state.packid < db.packids || state.pos < pack.length - 1
+   if (pack.prev === undefined) {
+      has_left = pack.id > 1 || pack.pos > 0
+      has_right = pack.id < tag.packids || pack.pos < pack.arr.length - 1
    }
    else {
       has_left = feed.prev != -1
-      has_right = state.prev != "" || findRightIdx(state.pos + 1, feed.subId) != -1
+      has_right = pack.prev != "" || findRightIdx(pack.pos + 1, feed.subId) != -1
    }
 
    return { feed, subs, has_right, has_left }
 }
 
+
+
 function hashUpdate() {
    let filter = ""
-   if (state.prev !== undefined)
-      filter = `!${state.prev}`
+   if (pack.prev !== undefined)
+      filter = `!${pack.prev}`
 
-   const hash = `#${state.packid}.${state.pos}${filter}`
+   const hash = `#${pack.tag}.${pack.id}.${pack.pos}${filter}`
 
    history.pushState(null, null, hash);
    window.dispatchEvent(new HashChangeEvent('hashchange', {
@@ -150,44 +187,40 @@ function hashUpdate() {
    }))
 }
 
-async function download(packid: number) {
-   if (packid > db.packids)
-      throw new Error(`requested packid "${packid}" is greater than total "${db.packids}"`)
 
-   if (packid < 0)
-      throw new Error('invalid packid smaller than "0"')
 
-   if (state.packid == packid)
+async function download(tagId: string, packid: number) {
+   if (pack.tag == tagId && pack.id == packid)
       return
 
    const opts = {}
-   let pack_name = db.latest ? "true" : "false"
-
-   if (packid < db.packids) {
+   let pack_name = tag.latest ? "true" : "false"
+   if (packid !== tag.packids) {
       opts["cache"] = "force-cache"
       pack_name = packid.toString()
    }
 
-   const req = await fetch(`${PACKS_URL}/${pack_name}.gz`, opts)
+   const req = await fetch(`${PACKS_URL}/${tagId}/${pack_name}.gz`, opts)
    const reader = req.body
       .pipeThrough(new DecompressionStream("gzip"))
       .pipeThrough(new TextDecoderStream())
       .getReader()
 
-   pack.length = 0
+   pack.arr.length = 0
 
-   let prev = ""
+   let data = ""
    while (true) {
       const res = await reader.read()
       if (res.done) break
 
-      prev += res.value
-      let arr = prev.split("\n")
-      prev = arr.pop()
+      data += res.value
+      let arr = data.split("\n")
+      data = arr.pop()
 
       for (const line of arr)
-         pack.push(JSON.parse(line))
+         pack.arr.push(JSON.parse(line))
    }
 
-   state.packid = packid
+   pack.tag = tagId
+   pack.id = packid
 }

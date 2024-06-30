@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "source": "src/index.pug",
   "scripts": {
-    "dev": "concurrently -k npm:serve npm:servep",
-    "serve": "SRR_CDN_URL=http://localhost:3000 parcel serve --no-cache --dist-dir ../dist --cache-dir ../.parcel-cache",
-    "servep": "npx serve --cors ../packs",
-    "served": "npx serve --cors ../debug",
+    "dev": "concurrently -k npm:serve_ui npm:serve_packs",
+    "serve_ui": "SRR_CDN_URL=http://localhost:3000 parcel serve --no-cache --dist-dir ../dist --cache-dir ../.parcel-cache",
+    "serve_packs": "DIR=${DEBUG:+debug}; DIR=${DIR:-packs}; set -x; npx serve --cors ../$DIR",
     "build": "parcel build --public-url . --no-cache --no-source-maps --dist-dir dist"
   },
   "dependencies": {

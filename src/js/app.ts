@@ -8,7 +8,7 @@ dayjs.extend(calendar)
 let showing = "[NONE]"
 const html = {
    panel: $(".srr-panel"),
-   body: $(".srr-feed"),
+   feed: $(".srr-feed"),
    header: $(".srr-header"),
    title: $(".srr-title"),
    content: $(".srr-content"),
@@ -21,6 +21,10 @@ const html = {
    tag: $(".srr-tag"),
    published: $(".srr-published"),
    selector: $(".srr-selector"),
+   view: {
+      panel: $(".vPanel"),
+      feed: $(".vFeed"),
+   },
 }
 
 
@@ -28,12 +32,12 @@ const html = {
 function show(view: string) {
    switch (view) {
       case "panel":
-         html.body.addClass("hidden")
-         html.panel.removeClass("hidden")
+         html.view.feed.addClass("hidden")
+         html.view.panel.removeClass("hidden")
          break
       case "feed":
-         html.body.removeClass("hidden")
-         html.panel.addClass("hidden")
+         html.view.panel.addClass("hidden")
+         html.view.feed.removeClass("hidden")
          break
    }
 
@@ -48,7 +52,7 @@ async function read(hash: string) {
    const prev = args[1]
    args = args[0].split(".")
 
-   let o = await packs.get(parseInt(args[0]), parseInt(args[1]), packs.setPrev(prev))
+   let o = await packs.get(args[0], parseInt(args[1]), parseInt(args[2]), packs.setPrev(prev))
    if (o == null)
       return
 
@@ -83,29 +87,59 @@ async function read(hash: string) {
 
 
 
-async function init() {
-   const subs = await packs.init()
+async function generateSelectorHtml() {
+   const tags = await packs.init()
+   const sTagIds = Object.keys(tags).sort((a, b) => tags[a].name.localeCompare(tags[b].name))
 
-   let sorted = Object.keys(subs).sort((a, b) => subs[a].title.localeCompare(subs[b].title))
-   let arr = [`<ul><li class="srr-label" data-value="">[ALL]</li>`]
-   for (const subId of sorted)
-      if (subs[subId].last_packid > 0)
-         arr.push(`<li class="srr-label" data-value="${subId}">${subs[subId].title}</li>`)
-   arr.push("</ul>")
+   const arr = ['<div class="srr-tabs">']
+   for (const tagId of sTagIds)
+      arr.push(`<button data-value="${tagId}">${tags[tagId].name}</button>`)
+   arr.push('</div>')
+
+   for (const tagId of Object.keys(tags)) {
+      const tag: ISubscriptionTag = tags[tagId]
+      const subs: { [id: number]: ISubscription } = tag.subscriptions
+      const sSubIds = Object.keys(subs).sort((a, b) => subs[a].title.localeCompare(subs[b].title))
+
+      arr.push(`<div class="srr-tabcontent" data-value="${tagId}">`)
+      for (const subId of sSubIds)
+         if (subs[subId].last_packid > 0)
+            arr.push(`<div class="srr-site" data-value="${tagId}.${subId}">${subs[subId].title}</div>`)
+      arr.push("</div>")
+   }
+
    html.selector.html(arr.join(""))
+}
 
-   $(".srr-label").on("click", async e => await packs.last(e.target.dataset.value))
+
+
+async function init() {
+   await generateSelectorHtml()
+
+   $(".srr-site").on("click", async e => await packs.last(e.target.dataset.value))
+   $(".srr-tabs > button").on("click", async e => {
+      if (e.target.className == "srr-active")
+         return await packs.last(e.target.dataset.value)
+
+      const tagId = e.target.dataset.value
+      $(`.srr-tabs > button[     data-value="${tagId}" ]`).addClass("srr-active")
+      $(`.srr-tabs > button:not([data-value="${tagId}" ])`).removeClass("srr-active")
+      $(`.srr-tabcontent[        data-value="${tagId}" ]`).removeClass("hidden")
+      $(`.srr-tabcontent:not([   data-value="${tagId}" ])`).addClass("hidden")
+   })
+
+   html.left.on("click", async e => e.target.disabled || await packs.left())
+   html.right.on("click", async e => e.target.disabled || await packs.right())
+   html.last.on("click", async () => await packs.last())
    html.menu.on("click", async () => {
       if (showing == "panel")
          await read(location.hash.substring(1))
       else
          show("panel")
    })
-   html.left.on("click", async e => e.target.disabled || await packs.left())
-   html.right.on("click", async e => e.target.disabled || await packs.right())
-   html.last.on("click", async e => await packs.last())
 
    window.onhashchange = async e => await read(e.newURL.split("#", 2)[1])
+
    document.onkeydown = async e => {
       switch (e.key) {
          case "w":
@@ -114,17 +148,17 @@ async function init() {
             e.preventDefault()
             break
          default:
-            if (!html.body.hasClass("hidden"))
+            if (!html.feed.hasClass("hidden"))
                switch (e.key) {
                   case "s":
                      await packs.last()
                      e.preventDefault()
                      break
                   case "a":
-                     case "ArrowLeft":
-                        html.left.trigger("click")
-                        e.preventDefault()
-                        break
+                  case "ArrowLeft":
+                     html.left.trigger("click")
+                     e.preventDefault()
+                     break
                   case "d":
                   case "ArrowRight":
                      html.right.trigger("click")
@@ -135,10 +169,19 @@ async function init() {
    }
 
    const hash = location.hash.substring(1)
-   if (!hash)
-      show("panel")
-   else
+   if (hash) {
+      const tagId = hash.split(".")[0]
+      $(`.srr-tabs > button[data-value="${tagId}"]`).trigger("click")
       await read(hash)
+   }
+   else {
+      $(".srr-tabs > button").first().trigger("click")
+      show("panel")
+   }
+
+   
 }
+
+
 
 init()
