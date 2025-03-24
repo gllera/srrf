@@ -10,30 +10,30 @@ html
 
    body
       .srr-container
-         .srr-panel.hidden
-            .srr-top Select a filter
-            .srr-selector
-            .srr-controls
-               button.srr-menu M
+         .srr-header
+            .srr-in
+               a.srr-link
+                  .srr-title
+            .srr-info
+               .srr-dropdown
+                  button.dropbtn.srr-website
+                  #srr-website-dd.dropdown-content
+                  img.anchor
+               .srr-published
+         .srr-content
+         .srr-ctrl
+            .srr-ctrl-left.srr-dropdown.hidden
+               button.dropbtn.srr-ext-text
+               #srr-ext-dd.dropdown-content
 
-         .srr-feed.hidden
-            .srr-header
-               .srr-in
-                  a.srr-link
-                     .srr-title
-               .srr-info
-                  .srr-website
-                  .srr-tag
-                  .srr-published
-            .srr-content
-            .srr-controls
-               button.srr-left(disabled) <
-               button.srr-right(disabled) >
-               button.srr-last >|
-               button.srr-menu M
+            .srr-ctrl-right
+               button.srr-left(disabled)
+                  .srr-left-icon
+               button.srr-right(disabled)
+                  .srr-right-icon
 
       script(type='text/javascript').
-         PACKS_URL = "#{process.env.SRR_CDN_URL}"
-         DB = fetch(PACKS_URL + "/db.json")
+         DB_URL = new URL("#{process.env.SRR_CDN_URL}", window.location)
+         DB = fetch(new URL("db.json", DB_URL))
 
       script(src='js/app.ts', type="module")

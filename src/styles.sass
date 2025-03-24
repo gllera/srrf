@@ -1,71 +1,14 @@
-@import './node_modules/bootstrap/scss/bootstrap-reboot'
+@use 'sass/base'
+@use 'sass/icons'
+@use 'sass/header'
+@use 'sass/ctrl'
+@use 'sass/dropdown'
 
-$feed-max-width: 978px
-$header-max-width: $feed-max-width * 1.5
-
-html
-    padding: .5rem
-    overflow-y: scroll
-
-img
-    @include img-fluid
-
-button
-    border-radius: 1rem
-    padding: 0.5rem 1.5rem
+@media (max-width: 500px)
+    .srr-ctrl
+        padding: 0
+    .srr-ctrl-left > :first-child, .srr-ctrl-right > :last-child
+        border-radius: 0
 
 .hidden
-    display: none
-
-.srr-feed
-    padding-bottom: 4rem
-
-.srr-header, .srr-top
-    margin-bottom: .5rem
-    box-shadow: 0 .3rem .1rem -.15rem #0004
-
-.srr-in
-    max-width: $header-max-width
-    margin: 0 auto
-    display: flex
-
-.srr-link
-    color: inherit
-    text-decoration: none
-
-.srr-title, .srr-top
-    font-weight: bold
-    font-size: 1.1rem
-
-.srr-container
-    max-width: $feed-max-width
-    margin: 0 auto
-
-.srr-info
-    display: flex
-    font-size: .8rem
-    padding: .2rem 0 .4rem 0
-
-.srr-website
-    font-weight: bold
-    border-radius: 1rem
-    background-color: #ddd
-    padding: 0rem .5rem
-    margin-right: .6rem
-
-.srr-tag
-    font-weight: bold
-    margin-right: .6rem
-
-.srr-published
-    color: gray
-
-.srr-controls
-    position: fixed
-    display: flex
-    right: 0
-    bottom: 0
-    margin: 1rem
-    *
-        margin-left: 1rem
-        width: 4rem
+    display: none !important

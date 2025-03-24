@@ -1,0 +1,34 @@
+@use 'variables' as v
+
+.srr-dropdown
+    position: relative
+
+    > .anchor
+        cursor: pointer
+        width: 1.5rem
+        height: 1.5rem
+        margin: 0 .2rem
+        content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32"><desc>Anchor Streamline Icon: https://streamlinehq.com</desc><g stroke-width="2.3"><path d="M.6 25c.4 3.3 3 6 6.3 6.4a80 80 0 0 0 18.2 0c3.3-.4 6-3 6.3-6.4a83 83 0 0 0 0-18c-.4-3.3-3-6-6.3-6.4A80 80 0 0 0 6.9.6C3.6 1 .9 3.6.6 7a83 83 0 0 0 0 18" fill="%23eee"/><path stroke="null" clip-rule="evenodd" d="M14.4 8.1q0-1 .3-1.1.3-.3 1.2-.4c1-.1 1 .2 1.2.4q.4.3.4 1.1 0 1-.4 1.2-.3.4-1.2.4c-.9 0-1-.2-1.2-.4q-.3-.2-.3-1.2zm1.5-3.5q-1.5 0-2.6 1-1 1-1 2.5 0 1.6 1 2.6.7.7 1.6.9v1.6l-2 .3a1 1 0 1 0 .5 2l1.5-.3V23c-4.2-.3-6.3-3-6.5-5.7V17H9l1.1.3a1 1 0 1 0 .5-2l-1.1-.2q-1.1-.2-2 .3-1 .6-1 2c.3 3.7 3.3 7.1 8.5 7.5v.8a1 1 0 1 0 2 0V25a9 9 0 0 0 8.5-7.6 2 2 0 0 0-.9-2q-.8-.5-2-.3l-1.2.3a1 1 0 0 0 .5 2L23 17h.4v.1c-.2 2.4-2.4 5.4-6.5 5.8v-7.8l1.5.2a1 1 0 0 0 .5-2l-2-.2v-1.6q1-.2 1.6-.9 1-1 1-2.6t-1-2.5-2.6-1z" fill-rule="evenodd" fill="%23444"/></g></svg>')
+    > .anchor[data-active="true"]
+        content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32"><desc>Anchor Streamline Icon: https://streamlinehq.com</desc><g stroke-width="2.3"><path fill="%23ff8282" d="M.6 25c.4 3.3 3 6 6.3 6.4a80 80 0 0 0 18.2 0c3.3-.4 6-3 6.3-6.4a83 83 0 0 0 0-18c-.4-3.3-3-6-6.3-6.4A80 80 0 0 0 6.9.6C3.6 1 .9 3.6.6 7a83 83 0 0 0 0 18"/><path fill="%23400" fill-rule="evenodd" d="M14.4 8.1q0-1 .3-1.1.3-.3 1.2-.4c1-.1 1 .2 1.2.4q.4.3.4 1.1 0 1-.4 1.2-.3.4-1.2.4c-.9 0-1-.2-1.2-.4q-.3-.2-.3-1.2zm1.5-3.5q-1.5 0-2.6 1-1 1-1 2.5 0 1.6 1 2.6.7.7 1.6.9v1.6l-2 .3a1 1 0 1 0 .5 2l1.5-.3V23c-4.2-.3-6.3-3-6.5-5.7V17H9l1.1.3a1 1 0 1 0 .5-2l-1.1-.2q-1.1-.2-2 .3-1 .6-1 2c.3 3.7 3.3 7.1 8.5 7.5v.8a1 1 0 1 0 2 0V25a9 9 0 0 0 8.5-7.6 2 2 0 0 0-.9-2q-.8-.5-2-.3l-1.2.3a1 1 0 0 0 .5 2L23 17h.4v.1c-.2 2.4-2.4 5.4-6.5 5.8v-7.8l1.5.2a1 1 0 0 0 .5-2l-2-.2v-1.6q1-.2 1.6-.9 1-1 1-2.6t-1-2.5-2.6-1z" clip-rule="evenodd" stroke="null"/></g></svg>')
+
+.dropdown-content
+    display: none
+    position: absolute
+    background-color: v.$btn-background
+    min-width: 10rem
+    box-shadow: 0 .2rem .5rem 0 rgba(0, 0, 0, 0.2)
+    z-index: 1
+
+    > a
+        color: black
+        padding: .2rem .4rem
+        text-decoration: none
+        display: block
+        text-wrap: nowrap
+
+        &:hover
+            background-color: v.$btn-background-hover
+
+.show
+    display: block

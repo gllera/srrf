@@ -1,20 +1,32 @@
-declare let PACKS_URL: string;
+declare let DB_URL: URL;
 declare let DB: Promise<Response>;
 
 interface IDB {
-  subids: number;
-  packids: number;
   latest: boolean;
-  subscriptions: Array<ISubscription>;
+  n_packs: number;
+  n_subs: number;
+  n_exts: number;
+  subs: Array<ISub>;
+  subs_mapped: Map<number, ISub>;
+  exts: Array<IExt>;
+  exts_mapped: Map<number, IExt>;
+  last_fetch: number;
 }
 
-interface ISubscription {
-  url: string;
+interface ISub {
   title: string;
-  tag: string;
-  last_uuid: string;
-  last_modified: string;
-  last_packid: number;
+  url: string;
+  error: string;
+  uuid: number;
+  packid: number;
+  id: number;
+}
+
+interface IExt {
+  name: string;
+  url: string;
+  url_parsed: URL;
+  id: number;
 }
 
 interface IFeed {
@@ -30,11 +42,13 @@ interface IShowFeed {
   has_right: boolean;
   has_left: boolean;
   feed: IFeed;
-  subs: ISubscription;
+  sub: ISub;
+  ext: IExt;
 }
 
 interface IState {
     prev: string,
     packid: number,
     pos: number,
+    extId: number,
 }

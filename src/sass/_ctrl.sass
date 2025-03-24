@@ -1,0 +1,36 @@
+@use 'variables' as v
+
+.srr-ctrl
+    left: 0
+    right: 0
+    bottom: 0
+    display: flex
+    position: fixed
+    padding: 1rem
+
+.srr-ctrl-right
+    align-self: flex-end
+    margin-left: auto
+    display: flex
+    flex-wrap: nowrap
+
+.srr-ctrl-left, .srr-ctrl-right, .srr-dropdown
+    > button
+        background-color: v.$btn-background
+        border: v.$btn-border
+        padding: .25rem 1rem
+        transition: 0.1s all
+        &:hover:not(:disabled), &:focus:not(:disabled)
+            background-color: v.$btn-background-hover
+        &:active:not(:disabled)
+            transform: scale(0.98)
+            box-shadow: .1rem .12rem .8rem .1rem rgba(0, 0, 0, .3)
+        &:disabled
+            opacity: .4
+
+.srr-ctrl-left
+    display: flex
+    > button
+        border-radius: 1rem
+    .dropdown-content
+        bottom: 100%

@@ -10,15 +10,15 @@
     "build": "parcel build --public-url . --no-cache --no-source-maps --dist-dir dist"
   },
   "dependencies": {
-    "@parcel/transformer-pug": "^2.12.0",
-    "@parcel/transformer-sass": "^2.12.0",
+    "@parcel/transformer-pug": "^2.13.3",
+    "@parcel/transformer-sass": "^2.13.3",
     "bootstrap": "^5.3.3",
     "cash-dom": "^8.1.5",
-    "dayjs": "^1.11.11",
-    "parcel": "^2.12.0"
+    "dayjs": "^1.11.13",
+    "parcel": "^2.13.3"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "serve": "^14.2.3"
+    "concurrently": "^9.1.2",
+    "serve": "^14.2.4"
   }
 }

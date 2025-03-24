@@ -1,0 +1,26 @@
+%srr-arrow
+    display: inline-block
+    vertical-align: middle
+    width: 0
+    height: 0
+    margin: 1rem .5rem
+
+.srr-left-icon
+    @extend %srr-arrow
+    border-top: .5rem solid transparent
+    border-bottom: .5rem solid transparent
+    border-right: 1rem solid #222
+
+.srr-right-icon
+    @extend %srr-arrow
+    border-top: .5rem solid transparent
+    border-bottom: .5rem solid transparent
+    border-left: 1rem solid #222
+
+.srr-right
+    border-top-right-radius: 1rem
+    border-bottom-right-radius: 1rem
+
+.srr-left
+    border-top-left-radius: 1rem
+    border-bottom-left-radius: 1rem
