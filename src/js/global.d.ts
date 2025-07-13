@@ -47,7 +47,7 @@ interface IShowFeed {
 }
 
 interface IState {
-    prev: string,
+    prev: string | undefined,
     packid: number,
     pos: number,
     extId: number,

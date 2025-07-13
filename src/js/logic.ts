@@ -253,6 +253,9 @@ async function downloadPack(packid: number) {
          pack.push(JSON.parse(line))
    }
 
+   if (prev.length > 0)
+      pack.push(JSON.parse(prev))
+
    state.packid = packid
 }
 
